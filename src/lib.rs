@@ -1,7 +1,10 @@
 #![allow(clippy::too_many_arguments)]
+#![allow(clippy::borrowed_box)]
+#![allow(clippy::boxed_local)]
 
 use std::cell::{Cell, RefCell};
 use std::marker::PhantomData;
+use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex, RwLock};
 
@@ -30,6 +33,9 @@ impl<T> ClownCar<T> {
         arc: Arc<T>,
         arc_mutex: Arc<Mutex<T>>,
         arc_rw_lock: Arc<RwLock<T>>,
+        deref: impl Deref<Target = T>,
+        asref: impl AsRef<T>,
+        borrow: impl std::borrow::Borrow<T>,
     ) {
         Self::use_ref(cell.get_mut());
         Self::use_ref(&ref_cell.borrow());
@@ -42,6 +48,9 @@ impl<T> ClownCar<T> {
         Self::use_ref(&arc);
         Self::use_ref(&arc_mutex.lock().unwrap());
         Self::use_ref(&arc_rw_lock.read().unwrap());
+        Self::use_ref(&deref);
+        Self::use_ref(asref.as_ref());
+        Self::use_ref(borrow.borrow());
     }
 
     pub fn clown_car_ref(
@@ -82,6 +91,9 @@ impl<T> ClownCar<T> {
         arc: Arc<T>, // doomed
         arc_mutex: Arc<Mutex<T>>,
         arc_rw_lock: Arc<RwLock<T>>,
+        mut deref: impl DerefMut<Target = T>,
+        mut asmut: impl AsMut<T>,
+        mut borrow_mut: impl std::borrow::BorrowMut<T>,
     ) {
         Self::use_mut_ref(cell.get_mut());
         Self::use_mut_ref(&mut *ref_cell.borrow_mut());
@@ -94,8 +106,10 @@ impl<T> ClownCar<T> {
         // not possible to get &mut T from Arc<T> Self::use_mut_ref(&mut *arc);
         Self::use_mut_ref(&mut *arc_mutex.lock().unwrap());
         Self::use_mut_ref(&mut *arc_rw_lock.write().unwrap());
+        Self::use_mut_ref(&mut deref);
+        Self::use_mut_ref(asmut.as_mut());
+        Self::use_mut_ref(borrow_mut.borrow_mut());
     }
-
 
     pub fn mut_clown_car_ref(
         cell: &mut Cell<T>,
