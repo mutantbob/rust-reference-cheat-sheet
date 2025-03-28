@@ -1,6 +1,7 @@
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::borrowed_box)]
 #![allow(clippy::boxed_local)]
+#![allow(clippy::missing_panics_doc)]
 
 use std::cell::{Cell, RefCell};
 use std::marker::PhantomData;
@@ -21,6 +22,7 @@ impl<T> ClownCar<T> {
         todo!();
     }
 
+    #[allow(clippy::needless_pass_by_value)]
     pub fn clown_car(
         mut cell: Cell<T>,
         ref_cell: RefCell<T>,
@@ -69,7 +71,7 @@ impl<T> ClownCar<T> {
         Self::use_ref(cell.get_mut());
         Self::use_ref(&*ref_cell.borrow());
         Self::use_ref(my_box);
-        ClownCar::<T>::use_ref(ref_count);
+        Self::use_ref(ref_count);
         Self::use_ref(Rc::get_mut(ref_count_cell).unwrap().get_mut());
         Self::use_ref(&ref_count_refcell.borrow());
         Self::use_ref(&*mutex.lock().unwrap());
@@ -79,6 +81,7 @@ impl<T> ClownCar<T> {
         Self::use_ref(&*arc_rw_lock.read().unwrap());
     }
 
+    #[allow(clippy::needless_pass_by_value)]
     pub fn mut_clown_car(
         mut cell: Cell<T>,
         ref_cell: RefCell<T>,
@@ -88,7 +91,7 @@ impl<T> ClownCar<T> {
         ref_count_refcell: Rc<RefCell<T>>,
         mutex: Mutex<T>,
         rw_lock: RwLock<T>,
-        arc: Arc<T>, // doomed
+        _arc: Arc<T>, // doomed
         arc_mutex: Arc<Mutex<T>>,
         arc_rw_lock: Arc<RwLock<T>>,
         mut deref: impl DerefMut<Target = T>,
@@ -120,7 +123,7 @@ impl<T> ClownCar<T> {
         ref_count_refcell: &Rc<RefCell<T>>,
         mutex: &mut Mutex<T>,
         rw_lock: &RwLock<T>,
-        arc: &mut Arc<T>, // doomed
+        _arc: &mut Arc<T>, // doomed
         arc_mutex: &Arc<Mutex<T>>,
         arc_rw_lock: &Arc<RwLock<T>>,
     ) {
