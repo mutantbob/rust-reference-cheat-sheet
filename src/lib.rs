@@ -31,17 +31,17 @@ impl<T> ClownCar<T> {
         arc_mutex: Arc<Mutex<T>>,
         arc_rw_lock: Arc<RwLock<T>>,
     ) {
-        Self::use_ref(&cell.get_mut());
-        Self::use_ref(&*ref_cell.borrow());
+        Self::use_ref(cell.get_mut());
+        Self::use_ref(&ref_cell.borrow());
         Self::use_ref(&my_box);
         Self::use_ref(&ref_count);
         Self::use_ref(Rc::get_mut(&mut ref_count_cell).unwrap().get_mut());
         Self::use_ref(&ref_count_refcell.borrow());
-        Self::use_ref(&*mutex.lock().unwrap());
-        Self::use_ref(&*rw_lock.read().unwrap());
-        Self::use_ref(&*arc);
-        Self::use_ref(&*arc_mutex.lock().unwrap());
-        Self::use_ref(&*arc_rw_lock.read().unwrap());
+        Self::use_ref(&mutex.lock().unwrap());
+        Self::use_ref(&rw_lock.read().unwrap());
+        Self::use_ref(&arc);
+        Self::use_ref(&arc_mutex.lock().unwrap());
+        Self::use_ref(&arc_rw_lock.read().unwrap());
     }
 
     pub fn clown_car_ref(
